@@ -15,4 +15,10 @@ app.post("/", async (req, res) => {
   }
 });
 
-app.listen(3000);
+app.get("/", async (req, res) => {
+  res.json({ info: "service is running" });
+});
+
+app.listen(3000, () => {
+  console.log("Server running");
+});
