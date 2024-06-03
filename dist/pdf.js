@@ -3,22 +3,38 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.t = exports.generatePDF = void 0;
+exports.makePDF = void 0;
 const puppeteer_1 = __importDefault(require("puppeteer"));
-const generatePDF = async (html) => {
-    const browser = await puppeteer_1.default.launch();
+const makePDF = async (opts) => {
+    const { html, matchTarget, scale, landscape, format } = opts;
+    const browser = await puppeteer_1.default.launch({
+        args: ["--no-sandbox", "--disable-setuid-sandbox"],
+    });
     const page = await browser.newPage();
     await page.setContent(html);
-    const buffer = await page.pdf({
-        printBackground: true,
-        timeout: 1550,
-    });
+    const sizes = await (async () => {
+        if (matchTarget) {
+            const PrintTarget = await page.waitForSelector(`#${matchTarget}`);
+            if (PrintTarget) {
+                const dimensions = await PrintTarget.boundingBox();
+                if (dimensions) {
+                    return {
+                        width: dimensions.width,
+                        height: dimensions.height,
+                    };
+                }
+            }
+        }
+        return {
+            width: undefined,
+            height: undefined,
+        };
+    })();
+    const buffer = await page.pdf(Object.assign(Object.assign({}, sizes), { printBackground: true, format,
+        landscape,
+        scale, timeout: 1500 }));
     await browser.close();
     return buffer;
 };
-exports.generatePDF = generatePDF;
-const t = () => {
-    return "DJKJ";
-};
-exports.t = t;
+exports.makePDF = makePDF;
 //# sourceMappingURL=pdf.js.map

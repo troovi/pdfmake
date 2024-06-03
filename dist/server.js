@@ -29,12 +29,18 @@ const app = (0, express_1.default)();
 app.use((0, express_1.json)({ limit: "50mb" }));
 app.use((0, express_1.urlencoded)({ extended: true, limit: "50mb", parameterLimit: 1000000 }));
 app.post("/", async (req, res) => {
-    console.log(req.body.source);
-    const buffer = await (0, pdf_1.generatePDF)(req.body.source.html);
-    res.send(buffer);
+    if (req.body.html && typeof req.body.html === "string") {
+        const buffer = await (0, pdf_1.makePDF)(req.body);
+        res.send(buffer);
+    }
+    else {
+        res.send("403");
+    }
 });
-app.get("/x", (req, res) => {
-    res.send((0, pdf_1.t)());
+app.get("/", async (req, res) => {
+    res.json({ info: "service is running" });
 });
-app.listen(3000);
+app.listen(3000, () => {
+    console.log("Server running");
+});
 //# sourceMappingURL=server.js.map

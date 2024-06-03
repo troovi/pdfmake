@@ -1,3 +1,10 @@
 /// <reference types="node" />
-export declare const generatePDF: (html: string) => Promise<Buffer>;
-export declare const t: () => string;
+interface Options {
+    html: string;
+    matchTarget?: string;
+    format?: "A4";
+    landscape?: boolean;
+    scale?: number;
+}
+export declare const makePDF: (opts: Options) => Promise<Buffer>;
+export {};
