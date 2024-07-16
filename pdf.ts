@@ -52,7 +52,6 @@ export const makePDF = async (opts: Options) => {
     format,
     landscape,
     scale,
-    timeout: 1500,
   });
 
   await browser.close();
